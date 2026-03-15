@@ -5,6 +5,11 @@
 
 COMMAND=$(jq -r '.tool_input.command' < /dev/stdin)
 
+# 管理者チェック: 環境変数 CC_ADMIN=true ならスキップ
+if [ "$CC_ADMIN" = "true" ]; then
+  exit 0
+fi
+
 # git push コマンドでなければスキップ
 if ! echo "$COMMAND" | grep -qE "git push"; then
   exit 0

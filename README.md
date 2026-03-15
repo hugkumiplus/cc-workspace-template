@@ -108,4 +108,5 @@ git pull origin main
 
 ## ライセンス
 
-MIT License
+Copyright (c) 2026 hugkumiplus. All rights reserved.
+社内利用限定。許可なく外部への再配布・公開を禁止します。

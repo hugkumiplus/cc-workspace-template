@@ -1,0 +1,39 @@
+# 依存パッケージ
+node_modules/
+.venv/
+venv/
+__pycache__/
+
+# ビルド成果物
+dist/
+build/
+.next/
+out/
+
+# 生成データ（スキルが作成するフォルダ）
+.company/
+.secretary/
+
+# ログ・キャッシュ
+*.log
+.claude/logs/
+
+# 大きなデータファイル（AIに読み込ませない）
+*.csv
+*.xlsx
+*.xls
+*.sqlite
+*.db
+
+# 画像・メディア（コード探索に不要）
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.mp4
+*.mp3
+*.pdf
+
+# OS
+.DS_Store
+Thumbs.db

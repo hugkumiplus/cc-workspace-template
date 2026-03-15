@@ -1,0 +1,30 @@
+# 環境変数・機密情報
+.env
+.env.*
+secrets/
+*.pem
+*.key
+credentials.*
+
+# Claude Code ローカル設定（個人用）
+.claude/settings.local.json
+CLAUDE.local.md
+
+# Claude Code ログ
+.claude/logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 仮想カンパニー生成データ（ユーザーごとに異なる）
+.company/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/

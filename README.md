@@ -1,87 +1,76 @@
 # CC Workspace Template
 
-Claude Code を活用するための汎用ワークスペーステンプレートです。
-チームでの業務効率化を目的とし、セキュリティガイドライン・汎用スキル・スキル共有の仕組みを含みます。
+非エンジニアでも安全に Claude Code を業務利用できるワークスペーステンプレートです。
 
-## このリポジトリでできること
+## コンセプト
 
-- Claude Code のセキュリティ設定が最初から適用される
-- 議事録作成・報告書作成・データ分析などの汎用スキルがすぐ使える
-- 自分だけのスキルを作って、チームと共有できる
+![Architecture](docs/architecture.png)
+
+```
+あなた → 秘書（窓口） → CEO（振り分け） → 各部署
+```
+
+- **秘書**: 常に窓口。何でも相談OK。TODO管理、壁打ち、メモ
+- **CEO**: 裏方で判断。部署が必要な案件を自動振り分け
+- **各部署**: 専門領域のファイル管理を担当
+
+ユーザーは部署を意識する必要なし。秘書に話しかけるだけ。
 
 ---
 
-## セットアップ手順（初めての方向け）
+## セットアップ
 
 ### 前提条件
 
-- Claude Code がインストール済みであること
-- ターミナル（コマンドプロンプト）が使えること
+- [Claude Code](https://claude.ai/code) がインストール済み
+- Git がインストール済み（`git --version` で確認）
 
-### Step 1: Git のインストール確認
-
-ターミナルを開いて、以下を実行してください：
+### Step 1: クローン
 
 ```bash
-git --version
-```
-
-バージョン番号が表示されればOKです。
-表示されない場合は [Git公式サイト](https://git-scm.com/) からインストールしてください。
-
-### Step 2: リポジトリのクローン（コピー）
-
-「クローン」とは、GitHub上のファイル一式を自分のPCにコピーすることです。
-
-```bash
-# 作業フォルダに移動（例: デスクトップ）
-cd ~/Desktop
-
-# リポジトリをクローン
-git clone https://github.com/YOUR_USERNAME/cc-workspace-template.git
-
-# クローンしたフォルダに移動
+git clone https://github.com/example-company/cc-workspace-template.git
 cd cc-workspace-template
 ```
 
-> **補足**: `git clone` は「ダウンロード」と似ていますが、変更履歴も一緒にコピーされます。
-> これにより、後から最新版に更新したり、自分の変更を共有したりできます。
-
-### Step 3: Claude Code で開く
+### Step 2: Claude Code を起動
 
 ```bash
 claude
 ```
 
-これだけで、セキュリティ設定とスキルが適用された状態で Claude Code が起動します。
+セキュリティ設定とスキルが自動で適用されます。
 
-### Step 4: スキルを使ってみる
+### Step 3: 秘書を起動
 
 ```
-> /meeting-notes
-> /report
-> /data-analysis
-> /review
-> /task
+/secretary
 ```
+
+対話的にあなた専用の管理環境がセットアップされます。
 
 ---
 
-## 最新版への更新（フェッチ & プル）
+## 使えるスキル
 
-テンプレートが更新されたら、以下で最新版を取得できます：
+| コマンド | 説明 |
+|---------|------|
+| `/secretary` | パーソナル秘書。TODO管理、メモ、壁打ち、ダッシュボード |
+| `/company` | 仮想会社組織。秘書→CEO→部署の流れで業務を管理 |
+| `/skill-create` | 自分だけのカスタムスキルを対話的に作成 |
 
-```bash
-# 最新の変更情報を確認（まだ適用しない）
-git fetch origin
+---
 
-# 変更を適用
-git pull origin main
-```
+## セキュリティ
 
-> **補足**:
-> - `git fetch` = 「新しい郵便が届いてるか郵便受けを見に行く」（中身はまだ開けない）
-> - `git pull` = 「届いた郵便を開けて中身を取り出す」（実際にファイルが更新される）
+3層防御で安全性を確保しています。
+
+| 層 | 仕組み | 役割 |
+|---|--------|------|
+| 第1層 | サンドボックス | OS レベルでファイル・ネットワークを制限 |
+| 第2層 | 権限制御（deny/allow） | 危険なコマンド・機密ファイルをブロック |
+| 第3層 | hook スクリプト | 複雑なパターンを検出してブロック |
+
+詳細は [docs/SECURITY_POLICY.md](docs/SECURITY_POLICY.md) を参照。
 
 ---
 
@@ -89,35 +78,31 @@ git pull origin main
 
 ```
 cc-workspace-template/
-├── README.md              ← このファイル
-├── CLAUDE.md              ← Claude Code への指示・セキュリティルール
+├── CLAUDE.md                        ← セキュリティルール・基本方針
+├── .claudeignore                    ← AI検索対象から除外するファイル
+├── .gitignore
 ├── .claude/
-│   └── settings.json      ← セキュリティ技術設定
-├── skills/                ← 汎用スキル
-│   ├── meeting-notes/     ← 議事録作成スキル
-│   ├── report-writer/     ← 報告書作成スキル
-│   ├── data-analysis/     ← データ分析スキル
-│   ├── document-review/   ← 文書校正スキル
-│   └── task-manager/      ← タスク管理スキル
-├── templates/
-│   └── skill-template/    ← スキル作成用テンプレート
-├── community-skills/      ← コミュニティ共有スキルのインデックス
+│   ├── settings.json                ← 権限制御（deny/allow）
+│   ├── scripts/                     ← hookスクリプト（4本）
+│   │   ├── block-dangerous-commands.sh
+│   │   ├── block-main-push.sh
+│   │   ├── protect-sensitive-files.sh
+│   │   └── protect-data.sh
+│   └── skills/                      ← スキル
+│       ├── secretary/               ← パーソナル秘書
+│       ├── company/                 ← 仮想会社組織
+│       └── skill-create/            ← スキル作成ツール
 └── docs/
-    ├── SETUP_GUIDE.md     ← 詳細セットアップガイド
-    ├── SECURITY_POLICY.md ← セキュリティポリシー詳細
-    └── SKILL_SHARING_GUIDE.md ← スキル共有ガイド
+    └── SECURITY_POLICY.md           ← セキュリティポリシー詳細
 ```
 
 ---
 
-## スキルの共有について
+## 最新版への更新
 
-自分で作ったスキルをチームと共有する方法は [docs/SKILL_SHARING_GUIDE.md](docs/SKILL_SHARING_GUIDE.md) を参照してください。
-
-## セキュリティについて
-
-このテンプレートには業務利用に適したセキュリティ設定が含まれています。
-詳細は [docs/SECURITY_POLICY.md](docs/SECURITY_POLICY.md) を参照してください。
+```bash
+git pull origin main
+```
 
 ---
 

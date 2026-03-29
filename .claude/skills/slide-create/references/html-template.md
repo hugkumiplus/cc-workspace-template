@@ -142,6 +142,143 @@ Reference architecture for generating slide presentations. Every presentation fo
 </html>
 ```
 
+## Section Tab Navigation + Progress Bar（推奨）
+
+セクションが3つ以上あるプレゼンでは、タブナビゲーション + セクション連動プログレスバーを実装する。
+
+### CSS
+
+```css
+.tab-progress {
+  position: fixed; top: 38px; left: 0;
+  height: 3px; background: var(--accent);
+  z-index: 201; transition: width 0.3s;
+}
+.tab-nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  display: flex; background: #111;
+  border-top: 2px solid var(--accent);
+  z-index: 200; padding: 0;
+}
+.tab-nav button {
+  flex: 1; background: none; border: none;
+  color: #888; font-size: clamp(0.7rem, 1.2vw, 1.2rem);
+  padding: 10px 4px; cursor: pointer;
+  transition: all 0.2s; border-right: 1px solid #333;
+}
+.tab-nav button:last-child { border-right: none; }
+.tab-nav button:hover { color: #fff; background: #222; }
+.tab-nav button.active {
+  color: var(--accent); background: #1a1a1a; font-weight: 700;
+}
+```
+
+### JavaScript
+
+```javascript
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let current = 0;
+
+// ★ 重要: start値は実際のスライドの0-indexedインデックス
+// スライドを追加・削除したら必ず再計算すること
+const partBounds = [
+  { name: 'Section 1', start: 0 },
+  { name: 'Section 2', start: 10 },
+  { name: 'Section 3', start: 20 },
+  // ... セクション数に応じて追加
+];
+
+function show(n) {
+  slides[current].classList.remove('active');
+  current = ((n % total) + total) % total;
+  slides[current].classList.add('active');
+  updateUI();
+}
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+function goToSlide(n) { show(n); }
+
+function updateUI() {
+  var tp = document.getElementById('tabProgress');
+  if (!tp) return;
+
+  // 現在のセクションを特定
+  var partIdx = 0;
+  for (var i = partBounds.length - 1; i >= 0; i--) {
+    if (current >= partBounds[i].start) { partIdx = i; break; }
+  }
+
+  // プログレスバー: セクション内の進捗をタブ幅に対応させる
+  var tabWidth = 100 / partBounds.length;
+  var partStart = partBounds[partIdx].start;
+  var partEnd = (partIdx < partBounds.length - 1)
+    ? partBounds[partIdx + 1].start : total;
+  var partProgress = (current - partStart) / Math.max(partEnd - partStart - 1, 1);
+  tp.style.width = (partIdx * tabWidth + partProgress * tabWidth) + '%';
+
+  // タブのアクティブ状態
+  document.querySelectorAll('.tab-nav button')
+    .forEach(function(t, i) { t.classList.toggle('active', i === partIdx); });
+}
+
+// キーボード操作
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+});
+
+// タッチ操作
+let touchStartX = 0;
+document.addEventListener('touchstart', function(e) {
+  touchStartX = e.touches[0].clientX;
+});
+document.addEventListener('touchend', function(e) {
+  var diff = e.changedTouches[0].clientX - touchStartX;
+  if (Math.abs(diff) > 50) { diff > 0 ? prev() : next(); }
+});
+
+show(0);
+```
+
+### HTML（bodyの末尾、</body>の直前）
+
+```html
+<div class="tab-progress" id="tabProgress"></div>
+<div class="tab-nav" id="tabNav">
+  <button onclick="goToSlide(0)">Section 1</button>
+  <button onclick="goToSlide(10)">Section 2</button>
+  <button onclick="goToSlide(20)">Section 3</button>
+</div>
+```
+
+### ★ partBounds の計算方法（重要）
+
+スライドを追加・削除・並び替えした場合、partBoundsのstart値がずれる。
+
+**正確な計算手順:**
+1. 全スライドの `class="slide"` 要素を順番に数える（0-indexed）
+2. 各セクション扉スライドが何番目かを確認
+3. その番号をpartBoundsのstartとタブのgoToSlide()に設定
+
+**Pythonで自動計算する例:**
+```python
+import re
+with open('slides.html', 'r') as f:
+    content = f.read()
+slides = re.findall(r'<div class="slide[^"]*" id="([^"]+)"', content)
+for i, sid in enumerate(slides):
+    print(f'{i}: {sid}')
+```
+
+### タブナビ使用時の注意
+
+- `.content` のpadding-topを十分に確保する（タブナビが上部約40px占有）
+- 最低 `padding-top: 60px` 以上を推奨
+- セクションヘッダー（appendix-header等）は `top: 50px` 以上に配置
+
+---
+
 ## Required JavaScript Features
 
 Every presentation must include:

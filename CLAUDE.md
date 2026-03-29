@@ -152,6 +152,7 @@ tasks/{YYYY-MM-DD}_{slug}/
 | `/task-start` | タスク開始（ドキュメント→人材配置→合意→TODO生成） |
 | `/task-review` | タスク振り返り（評価→学び→改善提案） |
 | `/skill-create` | 新しいスキルを対話的に作成・改善 |
+| `/slide-create` | スライド作成（12デザインから選択→HTML生成） |
 | `/marketing-strategy` | MKT1メソッドによるマーケティング戦略構築（D2C対応） |
 
 ---

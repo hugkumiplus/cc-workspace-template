@@ -41,13 +41,33 @@ Claude Codeがコマンドを実行する前に、スクリプトが自動でチ
 
 **用意されているスクリプト:**
 
-| スクリプト | 役割 |
-|-----------|------|
-| `block-dangerous-commands.sh` | 危険なコマンドパターンを検出してブロック |
-| `block-main-push.sh` | main/masterブランチへの直接pushをブロック |
-| `protect-sensitive-files.sh` | 機密ファイルへのアクセスをブロック |
+| スクリプト | タイミング | 役割 |
+|-----------|-----------|------|
+| `block-dangerous-commands.sh` | 実行前 | 危険なコマンドパターンを検出してブロック |
+| `block-main-push.sh` | 実行前 | main/masterブランチへの直接pushをブロック |
+| `protect-sensitive-files.sh` | 実行前 | 機密ファイルへのアクセスをブロック |
+| `protect-data.sh` | 実行前 | 大きなファイルやデータファイルの読み込みを警告 |
+| `scan-tool-output.sh` | 実行後 | 外部データに含まれるインジェクション攻撃を検出 |
 
 **設定場所**: `.claude/scripts/` ディレクトリ
+
+### プロンプトインジェクション対策
+
+外部から取得したデータ（Webページ、Slackメッセージ、Notionページ等）には、
+AIを騙して意図しない操作をさせようとする「プロンプトインジェクション」が含まれている可能性があります。
+
+このテンプレートでは以下の対策を実装しています:
+
+| 攻撃パターン | 対策 |
+|------------|------|
+| `curl | bash` 等のリモートコード実行 | `block-dangerous-commands.sh` でブロック |
+| Base64エンコードによる難読化 | 同上（`base64 -d \| bash` パターンを検出） |
+| 環境変数・機密情報の外部送信 | 同上（`env \| curl` パターンを検出） |
+| システムプロンプト窃取 | 同上（`CLAUDE.md` の外部送信パターンを検出） |
+| 外部データ内の悪意ある指示 | `scan-tool-output.sh` で警告（PostToolUse） |
+| MCP経由の全文検索による情報漏洩 | `settings.json` でsearch系ツールをdeny |
+
+参考: [AIエージェントの3層プロンプトインジェクション対策](https://creators.bengo4.com/entry/2026/03/24/080000)
 
 ---
 

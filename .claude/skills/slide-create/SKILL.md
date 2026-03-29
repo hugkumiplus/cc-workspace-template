@@ -108,6 +108,15 @@ npm不要、ブラウザで開くだけでプレゼン可能。
 
 references/style-presets.md を参照。
 
+## 参照元・更新方法
+
+このスキルのデザインプリセットとテンプレートは以下のリポジトリに基づいています:
+- **Frontend Slides**: https://github.com/zarazhangrui/frontend-slides
+
+プリセットやテンプレートを最新に更新するには:
+1. 上記リポジトリの最新版を確認
+2. `references/style-presets.md` と `references/html-template.md` を更新
+
 ## 重要な注意事項
 
 - **デザイン選択は必ずユーザーに聞く**。勝手に選ばない

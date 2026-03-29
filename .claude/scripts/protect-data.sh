@@ -4,8 +4,8 @@
 # exit 0: 許可 / exit 2: 警告（ブロック）
 
 # サイズ閾値の定義
-MAX_FILE_SIZE=1048576    # 1MB（バイト）
-DATA_FILE_SIZE=512000    # 500KB（バイト）
+MAX_FILE_SIZE=5242880    # 5MB（バイト）
+DATA_FILE_SIZE=2097152   # 2MB（バイト）
 
 # データファイルの拡張子パターン
 DATA_EXTENSIONS="csv|xlsx|xls|tsv|json"

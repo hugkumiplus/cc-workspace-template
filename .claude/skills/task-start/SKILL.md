@@ -26,6 +26,11 @@ trigger: /task-start
 
 slug名もユーザーと相談して決める。日付は今日の日付を使う。
 
+### タスクフォルダの命名規則
+- 形式: `tasks/{YYYY-MM-DD}_{slug}/`
+- slug: **英数字とハイフンのみ**。日本語は使わない
+- 例: `tasks/2026-03-30_lp-renewal/`、`tasks/2026-04-01_sns-campaign/`
+
 ### Step 2: フォルダ・ドキュメント作成（Automatic）
 
 `tasks/{YYYY-MM-DD}_{slug}/` に以下を自動生成:

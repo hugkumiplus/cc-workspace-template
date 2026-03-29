@@ -71,7 +71,7 @@ Claude Code をそのまま使うと、こうなりがちです：
 ### Step 1: クローン
 
 ```bash
-git clone https://github.com/example-company/cc-workspace-template.git
+git clone https://github.com/your-company/cc-workspace-template.git
 cd cc-workspace-template
 ```
 
@@ -122,6 +122,17 @@ claude
 知識保持型スキルは、一度構築すると以降のすべての会話で自動参照されます。
 マーケティング戦略スキルのように、戦略の中身そのものをスキルに格納しておくと、
 すべてのアウトプットが戦略に沿ったものになります。
+
+**ワークフロー系** — タスク実行のフロー
+- `/secretary`: パーソナル秘書。毎日のタスク・メモ・相談窓口
+- `/company`: 仮想組織。大規模案件をCEOが部署に振り分け
+- `/task-start`: タスク開始。goal.mdが揃うまでドキュメント作成
+- `/task-review`: 振り返り。成果評価→学びをMemoryに記録
+
+**ツール系** — 知識や成果物を作成
+- `/skill-create`: 繰り返し業務をスキル化
+- `/slide-create`: 12プリセットからプレゼンテーション自動生成
+- `/marketing-strategy`: MKT1フレームワークで7ステップ戦略構築
 
 ---
 
@@ -247,5 +258,5 @@ git pull origin main
 
 ## ライセンス
 
-Copyright (c) 2026 example-company. All rights reserved.
+Copyright (c) 2026 your-company. All rights reserved.
 社内利用限定。許可なく外部への再配布・公開を禁止します。

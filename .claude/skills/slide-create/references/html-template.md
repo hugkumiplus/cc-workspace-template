@@ -279,6 +279,117 @@ for i, sid in enumerate(slides):
 
 ---
 
+## モバイル対応（reveal.js方式 — 推奨）
+
+PCレイアウトをそのまま縮小してスマホに表示する。レスポンシブ（フォントサイズ変更・カラム変更）は使わない。
+
+**原則: フォント・レイアウトは一切変更しない。PC画面を丸ごと縮小する。**
+
+### なぜこの方式か
+
+- レスポンシブCSSだとスライドのレイアウトが崩れやすい
+- reveal.js / Marp も同じ「固定サイズ + scale()」方式を採用
+- フォント・グリッド・テーブルすべてが比率維持で崩れない
+
+### 必須CSS
+
+```css
+/* .slideに必ず背景色を指定する（bodyが黒になるため） */
+.slide {
+  background: var(--bg); /* これがないとスライドが黒背景になる */
+}
+
+/* モバイル対応 */
+@media (max-width: 1024px) {
+  body {
+    background: #000;  /* レターボックスの黒帯 */
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+  .slide {
+    overflow: hidden !important;
+  }
+  /* タブナビはスライドの上に固定 */
+  .tab-nav {
+    position: fixed !important;
+    top: 0 !important;
+    z-index: 9999 !important;
+  }
+  .tab-nav button {
+    font-size: 0.6rem !important;
+    padding: 6px 2px !important;
+  }
+  .tab-progress {
+    position: fixed !important;
+    z-index: 9998 !important;
+    top: 28px !important;
+  }
+  /* コピーライト非表示 */
+  div[style*="position:fixed"][style*="bottom:0"] {
+    display: none !important;
+  }
+}
+```
+
+### 必須JavaScript（show(0)の後に追加）
+
+```javascript
+function scaleSlides() {
+  var vw = window.innerWidth;
+  var vh = window.innerHeight;
+  var designW = 1920;
+  var designH = 1080;
+  var isMobile = vw <= 1024;
+
+  for (var i = 0; i < slides.length; i++) {
+    var s = slides[i];
+    if (!isMobile) {
+      // PC: スタイルをリセット
+      s.style.width = '';
+      s.style.height = '';
+      s.style.transform = '';
+      s.style.transformOrigin = '';
+      s.style.position = '';
+      s.style.top = '';
+      s.style.left = '';
+    } else {
+      // モバイル: 1920x1080固定 + scale()で縮小
+      var scale = Math.min(vw / designW, vh / designH);
+      s.style.width = designW + 'px';
+      s.style.height = designH + 'px';
+      s.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
+      s.style.transformOrigin = 'center center';
+      s.style.position = 'absolute';
+      s.style.top = '50%';
+      s.style.left = '50%';
+    }
+  }
+}
+window.addEventListener('resize', scaleSlides);
+window.addEventListener('load', scaleSlides);
+window.addEventListener('orientationchange', function() {
+  setTimeout(scaleSlides, 300);
+});
+scaleSlides();
+```
+
+### 仕組み
+
+1. `Math.min(画面幅/1920, 画面高/1080)` でscale値を計算
+2. `transform: translate(-50%, -50%) scale(X)` で中央配置＋縮小
+3. 縦持ち → 上下に黒帯（レターボックス、YouTube風）
+4. 横持ち → ほぼフルスクリーン
+5. PC（1024px超）→ スケーリング無効、通常表示
+
+### ★ 重要な注意点
+
+- **`.slide`に`background`を必ず指定する**。指定しないとbodyの黒がスライドに透けて文字が見えなくなる
+- タブナビは`z-index: 9999`でスライドの上に固定（scaleの影響を受けない）
+- `orientationchange`イベント後は300msの遅延を入れる（viewportが安定するまで待つ）
+
+---
+
 ## Required JavaScript Features
 
 Every presentation must include:

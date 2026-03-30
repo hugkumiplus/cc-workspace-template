@@ -96,6 +96,12 @@ npm不要、ブラウザで開くだけでプレゼン可能。
   - **実装詳細は `references/html-template.md` の「Section Tab Navigation」セクションを参照**
   - **★ スライド追加・削除後は partBounds の start値を必ず再計算すること**
 
+- **モバイル対応**（reveal.js方式）:
+  - PC表示をそのまま縮小してスマホに表示（レスポンシブ不要）
+  - 縦持ち: YouTube風レターボックス表示（上下黒帯）
+  - 横持ち: ほぼフルスクリーン
+  - **実装詳細は `references/html-template.md` の「モバイル対応」セクションを参照**
+
 **プリセット別のCSS定義は `references/style-presets.md` を参照。**
 
 保存先: ユーザーに確認。デフォルトは `output/slides.html`

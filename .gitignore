@@ -23,6 +23,9 @@ Thumbs.db
 # Node
 node_modules/
 
+# Cloudflare Wrangler（生成キャッシュ）
+.wrangler/
+
 # Python
 __pycache__/
 *.pyc
